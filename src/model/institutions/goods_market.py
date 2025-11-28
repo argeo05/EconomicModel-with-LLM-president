@@ -19,8 +19,8 @@ class GoodsMarket:
             return self.price
 
         imbalance = (total_demand - total_supply) / max(total_supply, 1e-6)
-        adjustment = 0.03 * imbalance
-        self.price = max(0.1, self.price * (1 + adjustment))
+        adjustment = 0.05 * imbalance
+        self.price = max(0.5, self.price * (1 + adjustment))
         return self.price
 
     def match_goods(

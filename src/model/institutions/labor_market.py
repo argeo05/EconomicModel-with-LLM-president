@@ -19,8 +19,8 @@ class LaborMarket:
             return self.wage
 
         imbalance = (total_demand - total_supply) / max(total_supply, 1e-6)
-        adjustment = 0.08 * imbalance
-        self.wage = max(0.5, self.wage * (1 + adjustment))
+        adjustment = 0.10 * imbalance
+        self.wage = max(1.0, self.wage * (1 + adjustment))
         return self.wage
 
     def match_labor(

@@ -82,7 +82,7 @@ def run_simulation(periods_per_year: int, years: int, config_path: str) -> list[
 
 
 def main() -> None:
-    years = 60
+    years = 30
     print("\nСценарий 1: обновление экономики раз в год")
     history_yearly = run_simulation(periods_per_year=1, years=years, config_path="config.yaml")
 

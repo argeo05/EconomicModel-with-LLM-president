@@ -23,7 +23,8 @@ class Household:
         self.income = wage * employment
 
     def decide_consumption(self) -> float:
-        self.desired_consumption = self.propensity_to_consume * self.income
+        available_funds = self.income + max(0.0, self.savings * 0.05)
+        self.desired_consumption = self.propensity_to_consume * available_funds
         return self.desired_consumption
 
     def decide_goods_demand(self, price: float) -> float:
