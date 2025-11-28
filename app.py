@@ -1,13 +1,15 @@
 import matplotlib.pyplot as plt
-from src.model.agents.household import Household
-from src.model.agents.firm import Firm
-from src.model.institutions.central_bank import CentralBank
-from src.model.institutions.labor_market import LaborMarket
-from src.model.institutions.goods_market import GoodsMarket
-from src.model.economy.economy import Economy
-from src.model.economy.state import EconomyState
-from src.model.utils.config_loader import load_config
-from src.visualization import plot_all_analytics
+from src import (
+    Household,
+    Firm,
+    CentralBank,
+    LaborMarket,
+    GoodsMarket,
+    Economy,
+    EconomyState,
+    load_config,
+    plot_all_analytics
+)
 
 
 def run_simulation(periods_per_year: int, years: int, config_path: str) -> list[dict[str, float]]:

@@ -1,10 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List
-from ..agents.household import Household
-from ..agents.firm import Firm
-from ..institutions.central_bank import CentralBank
-from ..institutions.labor_market import LaborMarket
-from ..institutions.goods_market import GoodsMarket
+from ..agents import Household, Firm
+from ..institutions import CentralBank, LaborMarket, GoodsMarket
 from .state import EconomyState
 
 
