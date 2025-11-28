@@ -4,6 +4,7 @@ from ..agents.household import Household
 from ..agents.firm import Firm
 from ..institutions.central_bank import CentralBank
 from ..institutions.labor_market import LaborMarket
+from ..institutions.goods_market import GoodsMarket
 from .state import EconomyState
 
 
@@ -13,8 +14,9 @@ class Economy:
     firms: List[Firm]
     central_bank: CentralBank
     labor_market: LaborMarket
+    goods_market: GoodsMarket
     state: EconomyState
-    tech_progress_rate: float = 0.001
+    tech_progress_rate: float = 0.005
 
     def step(self) -> None:
         labor_supply = [h.decide_labor(self.state.wage) for h in self.households]
@@ -31,20 +33,30 @@ class Economy:
         for firm, labor in zip(self.firms, actual_demand):
             total_output += firm.produce(labor)
 
-        if self.state.output > 0:
-            output_gap = (total_output - self.state.output) / self.state.output
-            inflation = 0.75 * self.state.inflation + 0.1 * output_gap + 0.003
-        else:
-            inflation = 0.0
-        
-        price_level = self.state.price_level * (1 + inflation)
-
         for h, labor in zip(self.households, actual_employed):
             h.update_income(new_wage, labor)
             h.decide_consumption()
 
-        for firm, labor in zip(self.firms, actual_demand):
-            firm.update_profit(price_level, new_wage, labor)
+        goods_supply = [f.decide_goods_supply() for f in self.firms]
+        goods_demand = [h.decide_goods_demand(self.goods_market.price) for h in self.households]
+
+        new_price = self.goods_market.clear_market(goods_supply, goods_demand)
+        actual_sold, actual_buy = self.goods_market.match_goods(goods_supply, goods_demand)
+
+        for h, bought in zip(self.households, actual_buy):
+            h.update_consumption(bought, new_price)
+
+        for firm, sold, labor in zip(self.firms, actual_sold, actual_demand):
+            firm.update_sales(sold, new_price, new_wage, labor)
+
+        if self.state.price_level > 0:
+            inflation = (new_price - self.state.price_level) / self.state.price_level
+        else:
+            inflation = 0.0
+        
+        price_level = new_price
+
+        for firm in self.firms:
             firm.update_capital(self.state.interest_rate)
             firm.productivity *= (1 + self.tech_progress_rate)
 
