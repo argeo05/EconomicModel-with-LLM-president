@@ -4,6 +4,12 @@ import numpy as np
 
 
 def plot_macroeconomic_indicators(history: List[Dict[str, float]], save_path: str = None) -> None:
+    """Plot macroeconomic indicators over time.
+
+    Args:
+        history: List of economic state dictionaries
+        save_path: Optional path to save figure
+    """
     periods = [h["period"] for h in history]
     output = [h["output"] for h in history]
     inflation = [h["inflation"] * 100 for h in history]
@@ -69,6 +75,12 @@ def plot_macroeconomic_indicators(history: List[Dict[str, float]], save_path: st
 # TODO: МБ реализовать визуализацию кривой Филлипса и Тейлора
 
 def plot_all_analytics(history: List[Dict[str, float]], output_dir: str = "outputs") -> None:
+    """Generate all analytical plots.
+
+    Args:
+        history: List of economic state dictionaries
+        output_dir: Directory to save plots
+    """
     import os
     os.makedirs(output_dir, exist_ok=True)
 

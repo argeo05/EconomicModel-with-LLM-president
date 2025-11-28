@@ -4,6 +4,11 @@ from typing import Sequence
 
 @dataclass
 class GoodsMarket:
+    """Goods market clearing mechanism.
+
+    Attributes:
+        price: Current price level
+    """
     price: float
 
     def clear_market(
@@ -11,6 +16,15 @@ class GoodsMarket:
         goods_supply_list: Sequence[float],
         goods_demand_list: Sequence[float]
     ) -> float:
+        """Adjust price based on supply and demand.
+
+        Args:
+            goods_supply_list: Goods supply from firms
+            goods_demand_list: Goods demand from households
+
+        Returns:
+            New price level
+        """
         total_supply = sum(goods_supply_list)
         total_demand = sum(goods_demand_list)
 
@@ -28,6 +42,15 @@ class GoodsMarket:
             goods_supply_list: Sequence[float],
             goods_demand_list: Sequence[float]
         ) -> tuple[list[float], list[float]]:
+        """Match goods supply and demand.
+
+        Args:
+            goods_supply_list: Goods supply from firms
+            goods_demand_list: Goods demand from households
+
+        Returns:
+            Tuple of actual sold and actual buy lists
+        """
         total_supply = sum(goods_supply_list)
         total_demand = sum(goods_demand_list)
 

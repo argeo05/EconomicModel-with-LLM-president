@@ -4,6 +4,17 @@ from typing import Optional
 
 @dataclass
 class EconomyState:
+    """Economic state variables.
+
+    Attributes:
+        period: Current period number
+        output: Aggregate output
+        inflation: Inflation rate
+        unemployment: Unemployment rate
+        interest_rate: Interest rate
+        wage: Wage rate
+        price_level: Price level
+    """
     period: int
     output: float
     inflation: float
@@ -21,6 +32,16 @@ class EconomyState:
         new_wage: float,
         new_price_level: float
     ) -> None:
+        """Update state variables.
+
+        Args:
+            new_output: New output value
+            new_inflation: New inflation rate
+            new_unemployment: New unemployment rate
+            new_interest_rate: New interest rate
+            new_wage: New wage rate
+            new_price_level: New price level
+        """
         self.period += 1
         self.output = new_output
         self.inflation = new_inflation
@@ -31,6 +52,14 @@ class EconomyState:
 
     @staticmethod
     def initial(config: Optional[dict] = None) -> "EconomyState":
+        """Create initial state from config.
+
+        Args:
+            config: Configuration dictionary
+
+        Returns:
+            Initial economy state
+        """
         return EconomyState(
             period=config.get("period", 0),
             output=config.get("output", 680.0),

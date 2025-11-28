@@ -4,6 +4,11 @@ from typing import Sequence
 
 @dataclass
 class LaborMarket:
+    """Labor market clearing mechanism.
+
+    Attributes:
+        wage: Current wage rate
+    """
     wage: float
 
     def clear_market(
@@ -11,6 +16,15 @@ class LaborMarket:
         labor_supply_list: Sequence[float],
         labor_demand_list: Sequence[float]
     ) -> float:
+        """Adjust wage based on supply and demand.
+
+        Args:
+            labor_supply_list: Labor supply from households
+            labor_demand_list: Labor demand from firms
+
+        Returns:
+            New wage rate
+        """
         total_supply = sum(labor_supply_list)
         total_demand = sum(labor_demand_list)
 
@@ -28,6 +42,15 @@ class LaborMarket:
         labor_supply_list: Sequence[float], 
         labor_demand_list: Sequence[float]
     ) -> tuple[list[float], list[float]]:
+        """Match labor supply and demand.
+
+        Args:
+            labor_supply_list: Labor supply from households
+            labor_demand_list: Labor demand from firms
+
+        Returns:
+            Tuple of actual employment and actual demand lists
+        """
         total_supply = sum(labor_supply_list)
         total_demand = sum(labor_demand_list)
 

@@ -7,6 +7,17 @@ from .state import EconomyState
 
 @dataclass
 class Economy:
+    """Economic system simulation.
+
+    Attributes:
+        households: List of household agents
+        firms: List of firm agents
+        central_bank: Central bank institution
+        labor_market: Labor market institution
+        goods_market: Goods market institution
+        state: Current economy state
+        tech_progress_rate: Technological progress rate
+    """
     households: List[Household]
     firms: List[Firm]
     central_bank: CentralBank
@@ -16,6 +27,7 @@ class Economy:
     tech_progress_rate: float = 0.005
 
     def step(self) -> None:
+        """Execute one simulation period."""
         labor_supply = [h.decide_labor(self.state.wage) for h in self.households]
         labor_demand = [f.decide_labor_demand(self.state.wage) for f in self.firms]
 
