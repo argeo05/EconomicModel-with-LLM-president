@@ -10,6 +10,8 @@ __pycache__/
 .idea/
 .Python
 build/
+outputs/ 
+.vscode/
 develop-eggs/
 dist/
 downloads/
@@ -22,6 +24,7 @@ sdist/
 var/
 wheels/
 share/python-wheels/
+.github/
 *.egg-info/
 .installed.cfg
 *.egg

@@ -7,6 +7,7 @@ from src.model.institutions.goods_market import GoodsMarket
 from src.model.economy.economy import Economy
 from src.model.economy.state import EconomyState
 from src.model.utils.config_loader import load_config
+from src.visualization import plot_all_analytics
 
 
 def run_simulation(periods_per_year: int, years: int, config_path: str) -> list[dict[str, float]]:
@@ -85,9 +86,7 @@ def main() -> None:
     years = 30
     print("\nСценарий 1: обновление экономики раз в год")
     history_yearly = run_simulation(periods_per_year=1, years=years, config_path="config.yaml")
-
-    print("\nобновление экономики раз в 3 месяца")
-    # history_quarterly = run_simulation(periods_per_year=4, years=years, config_path="config.yaml")
-
+    
+    plot_all_analytics(history_yearly, output_dir="outputs")
 if __name__ == "__main__":
     main()
