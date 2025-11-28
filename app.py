@@ -3,6 +3,7 @@ from src.model.agents.household import Household
 from src.model.agents.firm import Firm
 from src.model.institutions.central_bank import CentralBank
 from src.model.institutions.labor_market import LaborMarket
+from src.model.institutions.goods_market import GoodsMarket
 from src.model.economy.economy import Economy
 from src.model.economy.state import EconomyState
 from src.model.utils.config_loader import load_config
@@ -15,28 +16,29 @@ def run_simulation(periods_per_year: int, years: int, config_path: str) -> list[
     households = []
     for class_name in ["high_income", "middle_income", "low_income"]:
         class_config = config["households"][class_name]
-        households.extend([
+        households.append(
             Household(
                 income=0.0,
                 consumption=0.0,
                 propensity_to_consume=class_config["propensity_to_consume"],
                 labor_sensitivity=class_config["labor_sensitivity"],
-                max_labor_time=class_config["max_labor_time"]
+                max_labor_time=class_config["max_labor_time"],
+                n=class_config["n"],
+                savings=class_config.get("initial_savings", 0.0)
             )
-            for _ in range(class_config["n"])
-        ])
+        )
 
     firms = []
     for firm_type in ["large", "medium", "small"]:
         firm_config = config["firms"][firm_type]
-        firms.extend([
+        firms.append(
             Firm(
                 capital=firm_config["capital"],
                 alpha=firm_config["alpha"],
-                productivity=firm_config["productivity"]
+                productivity=firm_config["productivity"],
+                n=firm_config["n"]
             )
-            for _ in range(firm_config["n"])
-        ])
+        )
 
     cb = CentralBank(
         r=config["central_bank"]["r"],
@@ -47,13 +49,15 @@ def run_simulation(periods_per_year: int, years: int, config_path: str) -> list[
         phi_y=config["central_bank"]["phi_y"]
     )
 
-    labor_market = LaborMarket()
     initial_state = config.get("initial_state", {})
+    labor_market = LaborMarket(initial_state["wage"])
+    goods_market = GoodsMarket(price=config["goods_market"]["initial_price"])
     economy = Economy(
         households=households,
         firms=firms,
         central_bank=cb,
         labor_market=labor_market,
+        goods_market=goods_market,
         state=EconomyState.initial(initial_state)
     )
 
@@ -78,12 +82,12 @@ def run_simulation(periods_per_year: int, years: int, config_path: str) -> list[
 
 
 def main() -> None:
-    years = 20
+    years = 60
     print("\nСценарий 1: обновление экономики раз в год")
     history_yearly = run_simulation(periods_per_year=1, years=years, config_path="config.yaml")
 
     print("\nобновление экономики раз в 3 месяца")
-    history_quarterly = run_simulation(periods_per_year=4, years=years, config_path="config.yaml")
+    # history_quarterly = run_simulation(periods_per_year=4, years=years, config_path="config.yaml")
 
 if __name__ == "__main__":
     main()
