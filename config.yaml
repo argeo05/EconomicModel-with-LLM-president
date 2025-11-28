@@ -1,0 +1,59 @@
+households:
+  high_income:
+    n: 10
+    propensity_to_consume: 0.70
+    labor_sensitivity: 0.28
+    max_labor_time: 1.0
+    initial_savings: 1200.0
+  middle_income:
+    n: 50
+    propensity_to_consume: 0.80
+    labor_sensitivity: 0.30
+    max_labor_time: 1.0
+    initial_savings: 500.0
+  low_income:
+    n: 40
+    propensity_to_consume: 0.92
+    labor_sensitivity: 0.32
+    max_labor_time: 1.0
+    initial_savings: 200.0
+
+firms:
+  large:
+    n: 3
+    capital: 250.0
+    alpha: 0.32
+    productivity: 1.9
+  medium:
+    n: 10
+    capital: 65.0
+    alpha: 0.32
+    productivity: 1.5
+  small:
+    n: 37
+    capital: 12.0
+    alpha: 0.32
+    productivity: 1.2
+
+central_bank:
+  r: 0.03
+  r_star: 0.03
+  pi_star: 0.02
+  Y_star: 240.0
+  phi_pi: 0.5
+  phi_y: 0.2
+
+goods_market:
+  initial_price: 1.2
+
+simulation:
+  periods: 20
+
+initial_state:
+  period: 0
+  output: 240.0
+  inflation: 0.02
+  unemployment: 0.05
+  interest_rate: 0.03
+  wage: 3.00
+  price_level: 1.2
