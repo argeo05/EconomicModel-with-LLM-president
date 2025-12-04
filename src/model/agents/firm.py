@@ -76,8 +76,7 @@ class Firm:
         Args:
             interest_rate: Interest rate affecting investment
         """
-        rate_factor = max(0.6, 1.1 - 4.0 * (interest_rate - 0.03))
-        investment = max(0.0, self.profit * self.investment_rate * rate_factor)
+        investment = max(0.0, self.profit * self.investment_rate)
         depreciation = self.capital * self.depreciation_rate
         self.capital = max(1.0, self.capital + investment - depreciation)
 
