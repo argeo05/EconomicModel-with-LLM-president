@@ -85,8 +85,7 @@ def run_simulation(periods_per_year: int, years: int, config_path: str) -> list[
 
 
 def main() -> None:
-    years = 30
-    print("\nСценарий 1: обновление экономики раз в год")
+    years = 15
     history_yearly = run_simulation(periods_per_year=1, years=years, config_path="config.yaml")
     
     plot_all_analytics(history_yearly, output_dir="outputs")

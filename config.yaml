@@ -46,9 +46,6 @@ central_bank:
 goods_market:
   initial_price: 1.2
 
-simulation:
-  periods: 20
-
 initial_state:
   period: 0
   output: 240.0

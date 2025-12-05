@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import List
-from ..agents import Household, Firm
+from ..agents import Household, Firm, President
 from ..institutions import CentralBank, LaborMarket, GoodsMarket
 from .state import EconomyState
 
@@ -62,7 +62,7 @@ class Economy:
             inflation = (new_price - self.state.price_level) / self.state.price_level
         else:
             inflation = 0.0
-        
+
         price_level = new_price
 
         for firm in self.firms:
@@ -70,6 +70,15 @@ class Economy:
             firm.productivity *= (1 + self.tech_progress_rate)
 
         new_rate = self.central_bank.propose_rate(inflation, total_output)
+        # new_rate = President.make_decision(
+        #     y_star=self.central_bank.Y_star,
+        #     inflation=inflation,
+        #     output=total_output,
+        #     unemployment=unemployment,
+        #     supply_goods=sum(goods_supply),
+        #     demand_goods=sum(goods_demand),
+        #     r_central_bank=new_rate
+        # )
 
         self.state.update(
             new_output=total_output,
