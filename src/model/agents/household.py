@@ -16,6 +16,7 @@ class Household:
         labor_supply: Labor supply quantity
         savings: Accumulated savings
         desired_consumption: Desired consumption amount
+        interest_rate_sensitivity: Sensitivity to interest rate in consumption decision
     """
     income: float
     consumption: float
@@ -26,6 +27,7 @@ class Household:
     labor_supply: float = 0.0
     savings: float = 0.0
     desired_consumption: float = 0.0
+    interest_rate_sensitivity: float = 0.5
 
     def decide_labor(self, wage: float) -> float:
         """Decide labor supply based on wage.
@@ -49,14 +51,15 @@ class Household:
         """
         self.income = wage * employment
 
-    def decide_consumption(self) -> float:
+    def decide_consumption(self,  interest_rate: float) -> float:
         """Decide desired consumption.
 
         Returns:
             Desired consumption amount
         """
         available_funds = self.income + max(0.0, self.savings * 0.05)
-        self.desired_consumption = self.propensity_to_consume * available_funds
+        adjusted_propensity = self.propensity_to_consume / (1 + self.interest_rate_sensitivity * interest_rate)
+        self.desired_consumption = adjusted_propensity * available_funds
         return self.desired_consumption
 
     def decide_goods_demand(self, price: float) -> float:

@@ -27,7 +27,7 @@ class Firm:
     investment_rate: float = 0.25
     depreciation_rate: float = 0.025
 
-    def decide_labor_demand(self, wage: float) -> float:
+    def decide_labor_demand(self, wage: float, interest_rate: float = 0.0) -> float:
         """Calculate optimal labor demand.
 
         Args:
@@ -42,8 +42,9 @@ class Firm:
             mpl_coef = (1 - self.alpha) * self.productivity
             base = mpl_coef * (self.capital ** self.alpha) / wage
             self.labor_demand = base ** (1 / (1 + self.alpha))
+            self.labor_demand /= (1 + interest_rate)
         return max(0.01, self.labor_demand * self.n)
-
+    
     def produce(self, labor: float) -> float:
         """Produce output using Cobb-Douglas function.
 
@@ -76,7 +77,8 @@ class Firm:
         Args:
             interest_rate: Interest rate affecting investment
         """
-        investment = max(0.0, self.profit * self.investment_rate)
+        base_investment = max(0.0, self.profit * self.investment_rate)
+        investment = base_investment / (1 + interest_rate)
         depreciation = self.capital * self.depreciation_rate
         self.capital = max(1.0, self.capital + investment - depreciation)
 
