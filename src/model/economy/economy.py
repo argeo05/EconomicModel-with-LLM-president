@@ -1,11 +1,9 @@
-from dataclasses import dataclass, field
 from typing import List
 from ..agents import Household, Firm, President
 from ..institutions import CentralBank, LaborMarket, GoodsMarket
 from .state import EconomyState
 
 
-@dataclass
 class Economy:
     """Economic system simulation.
 
@@ -17,19 +15,25 @@ class Economy:
         goods_market: Goods market institution
         state: Current economy state
         tech_progress_rate: Technological progress rate
+        llm_based: If true use llm, else only rules
     """
-    households: List[Household]
-    firms: List[Firm]
-    central_bank: CentralBank
-    labor_market: LaborMarket
-    goods_market: GoodsMarket
-    state: EconomyState
-    tech_progress_rate: float = 0.005
+
+    def __init__(self, households: List[Household], firms: List[Firm], central_bank: CentralBank,
+                 labor_market: LaborMarket, goods_market: GoodsMarket, state: EconomyState,
+                 llm_based: bool, tech_progress_rate: float = 0.005):
+        self.households = households
+        self.firms = firms
+        self.central_bank = central_bank
+        self.labor_market = labor_market
+        self.goods_market = goods_market
+        self.state = state
+        self.tech_progress_rate = tech_progress_rate
+        self.llm_based = llm_based
 
     def step(self) -> None:
         """Execute one simulation period."""
         labor_supply = [h.decide_labor(self.state.wage) for h in self.households]
-        labor_demand = [f.decide_labor_demand(self.state.wage) for f in self.firms]
+        labor_demand = [f.decide_labor_demand(self.state.wage, self.state.interest_rate) for f in self.firms]
 
         new_wage = self.labor_market.clear_market(labor_supply, labor_demand)
         actual_employed, actual_demand = self.labor_market.match_labor(labor_supply, labor_demand)
@@ -44,7 +48,7 @@ class Economy:
 
         for h, labor in zip(self.households, actual_employed):
             h.update_income(new_wage, labor)
-            h.decide_consumption()
+            h.decide_consumption(self.state.interest_rate)
 
         goods_supply = [f.decide_goods_supply() for f in self.firms]
         goods_demand = [h.decide_goods_demand(self.goods_market.price) for h in self.households]
@@ -69,16 +73,17 @@ class Economy:
             firm.update_capital(self.state.interest_rate)
             firm.productivity *= (1 + self.tech_progress_rate)
 
-        new_rate = self.central_bank.propose_rate(inflation, total_output)
-        # new_rate = President.make_decision(
-        #     y_star=self.central_bank.Y_star,
-        #     inflation=inflation,
-        #     output=total_output,
-        #     unemployment=unemployment,
-        #     supply_goods=sum(goods_supply),
-        #     demand_goods=sum(goods_demand),
-        #     r_central_bank=new_rate
-        # )
+        new_rate = 10 * self.central_bank.propose_rate(inflation, total_output)
+        if self.llm_based:
+            new_rate = President.make_decision(
+                y_star=self.central_bank.Y_star,
+                inflation=inflation,
+                output=total_output,
+                unemployment=unemployment,
+                supply_goods=sum(goods_supply),
+                demand_goods=sum(goods_demand),
+                r_central_bank=new_rate
+            )
 
         self.state.update(
             new_output=total_output,

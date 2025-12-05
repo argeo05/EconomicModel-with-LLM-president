@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+import argparse
 from src import (
     Household,
     Firm,
@@ -12,9 +12,8 @@ from src import (
 )
 
 
-def run_simulation(periods_per_year: int, years: int, config_path: str) -> list[dict[str, float]]:
+def run_simulation(years: int, config_path: str, llm_based: bool) -> list[dict[str, float]]:
     config = load_config(config_path)
-    total_periods = periods_per_year * years
 
     households = []
     for class_name in ["high_income", "middle_income", "low_income"]:
@@ -61,11 +60,12 @@ def run_simulation(periods_per_year: int, years: int, config_path: str) -> list[
         central_bank=cb,
         labor_market=labor_market,
         goods_market=goods_market,
-        state=EconomyState.initial(initial_state)
+        state=EconomyState.initial(initial_state),
+        llm_based=llm_based
     )
 
     history = []
-    for _ in range(total_periods):
+    for _ in range(years):
         economy.step()
         s = economy.state
         history.append({
@@ -85,9 +85,16 @@ def run_simulation(periods_per_year: int, years: int, config_path: str) -> list[
 
 
 def main() -> None:
-    years = 15
-    history_yearly = run_simulation(periods_per_year=1, years=years, config_path="config.yaml")
-    
-    plot_all_analytics(history_yearly, output_dir="outputs")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("years", type=int, help="number of years", default=10)
+    parser.add_argument("--llm-based", action="store_true", help="llm based flag", default="llm-based")
+    parser.add_argument("--config", type=str, help="path to config file", default="config.yaml")
+    args = parser.parse_args()
+
+    history_yearly = run_simulation(years=args.years, config_path=args.config,
+                                    llm_based=args.llm_based)
+
+    plot_all_analytics(history_yearly, output_dir="output")
+
 if __name__ == "__main__":
     main()

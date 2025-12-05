@@ -10,6 +10,7 @@ __pycache__/
 .idea/
 .Python
 build/
+output/
 outputs/ 
 .vscode/
 develop-eggs/
