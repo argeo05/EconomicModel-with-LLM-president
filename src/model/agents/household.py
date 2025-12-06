@@ -2,7 +2,6 @@ import json
 from dataclasses import dataclass
 from typing import Any, List
 import perplexity
-from pyexpat.errors import messages
 
 client = perplexity.Perplexity()
 
@@ -125,6 +124,15 @@ class Households:
     def append(self, household: Household) -> None:
         self.households.append(household)
 
+    def _get_advice_from_president(self) -> str:
+        if self.president_advice:
+            return (f"Президент по прошествию предыдущего периода дал совет{self.president_advice}. "
+                    f"Ты не обязан его слушать, но знать о нем должен.")
+        else:
+            return ""
+
+
+
     def decide_labors(self, wage: float, llm_based: bool) -> List[float]:
         if not llm_based:
             return [h.decide_labor(wage) for h in self.households]
@@ -145,6 +153,7 @@ class Households:
                 "role": "user",
                 "content": f"""Текущая ставка заработной платы: {wage}.
                     Данные по домохозяйствам: {households_info}
+                    {self._get_advice_from_president()}
                     Определи для каждого домохозяйства предложение труда
                     то есть количество труда, которое домохозяйство готово предложить при данной зп.
                     Значение должно быть от 0 до max_labor_time для каждого домохозяйства.
@@ -206,6 +215,7 @@ class Households:
                 "role": "user",
                 "content": f"""Текущая процентная ставка: {interest_rate}.
                     Данные по домохозяйствам: {households_info}
+                    {self._get_advice_from_president()}
                     Определи для каждого домохозяйства желаемое потребление 
                     то есть сколько денег домохозяйство хочет потратить на товары. Не больше чем available_funds.
                     Ответ в формате(ничего более, далее я паршу это как json): {{"desired_consumptions": [число для домохозяйства 0, число для домохозяйства 1, ...]}}

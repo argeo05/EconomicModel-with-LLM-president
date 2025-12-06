@@ -75,7 +75,7 @@ class Economy:
 
         new_rate = self.central_bank.propose_rate(inflation, total_output)
         if self.llm_based_president:
-            new_rate = President.make_decision(
+            president_answer = President.make_decision(
                 y_star=self.central_bank.Y_star,
                 inflation=inflation,
                 output=total_output,
@@ -84,6 +84,8 @@ class Economy:
                 demand_goods=sum(goods_demand),
                 r_central_bank=new_rate
             )
+            new_rate = president_answer.new_interest_rate
+            self.households.president_advice = president_answer.advice
 
         new_wage = self.labor_market.clear_market(labor_supply, labor_demand)
         self.state.update(

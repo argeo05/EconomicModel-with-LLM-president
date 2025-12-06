@@ -1,4 +1,5 @@
 import json
+from dataclasses import dataclass
 
 import perplexity
 client = perplexity.Perplexity()
@@ -6,7 +7,7 @@ client = perplexity.Perplexity()
 class President:
     @classmethod
     def make_decision(cls, y_star: float, inflation: float, output: float, unemployment: float, supply_goods: float,
-                      demand_goods: float, r_central_bank: float) -> float:
+                      demand_goods: float, r_central_bank: float) -> "PresidentDecision":
         messages = [
             {
                 "role": "system",
@@ -44,6 +45,8 @@ class President:
                 ).choices[0].message.content
 
                 data = json.loads(president_answer)
+                if not("new_interest_rate" in data and "comment" in data and "advice" in data):
+                    raise json.decoder.JSONDecodeError("Missing keys in response", president_answer, 0)
                 break
             except json.decoder.JSONDecodeError as e:
                 print(f"LLM returned not right format: {president_answer}, trying again. Exception: {e} ")
@@ -56,7 +59,10 @@ class President:
                 print(f"API error: {e.status_code}")
                 print(e.response)
 
-        return float(data["new_interest_rate"])
+        return PresidentDecision(float(data["new_interest_rate"]), data["comment"], data["advice"])
 
-
-
+@dataclass
+class PresidentDecision:
+    new_interest_rate: float
+    comment: str
+    advice: str
