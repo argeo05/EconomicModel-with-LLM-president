@@ -10,14 +10,14 @@ from src import (
     load_config,
     plot_all_analytics
 )
+from src.model.agents import Households
 
 
-def run_simulation(years: int, config_path: str, llm_based: bool) -> list[dict[str, float]]:
+def run_simulation(years: int, config_path: str, llm_based_president: bool, llm_based_households: bool) -> list[dict[str, float]]:
     config = load_config(config_path)
 
-    households = []
-    for class_name in ["high_income", "middle_income", "low_income"]:
-        class_config = config["households"][class_name]
+    households: Households = Households()
+    for class_config in config["households"]:
         households.append(
             Household(
                 income=0.0,
@@ -31,8 +31,7 @@ def run_simulation(years: int, config_path: str, llm_based: bool) -> list[dict[s
         )
 
     firms = []
-    for firm_type in ["large", "medium", "small"]:
-        firm_config = config["firms"][firm_type]
+    for firm_config in config["firms"]:
         firms.append(
             Firm(
                 capital=firm_config["capital"],
@@ -61,7 +60,8 @@ def run_simulation(years: int, config_path: str, llm_based: bool) -> list[dict[s
         labor_market=labor_market,
         goods_market=goods_market,
         state=EconomyState.initial(initial_state),
-        llm_based=llm_based
+        llm_based_president=llm_based_president,
+        llm_based_households=llm_based_households
     )
 
     history = []
@@ -87,12 +87,14 @@ def run_simulation(years: int, config_path: str, llm_based: bool) -> list[dict[s
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("years", type=int, help="number of years", default=10)
-    parser.add_argument("--llm-based", action="store_true", help="llm based flag", default="llm-based")
+    parser.add_argument("--llm-based-president", action="store_true", help="use LLM for president decisions")
+    parser.add_argument("--llm-based-households", action="store_true", help="use LLM for household decisions")
     parser.add_argument("--config", type=str, help="path to config file", default="config.yaml")
     args = parser.parse_args()
 
     history_yearly = run_simulation(years=args.years, config_path=args.config,
-                                    llm_based=args.llm_based)
+                                    llm_based_president=args.llm_based_president,
+                                    llm_based_households=args.llm_based_households)
 
     plot_all_analytics(history_yearly, output_dir="output")
 
