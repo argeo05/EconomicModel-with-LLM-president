@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 
+
 class Plots:
     def __init__(self):
         self.fig = None
@@ -11,7 +12,8 @@ class Plots:
         self.unemployment_data = []
         self.interest_rate_data = []
         self.wage_data = []
-        
+        self.president_messages = []
+
         plt.ion()
         plt.show(block=False)
         self.init_macroeconomic_plots()
@@ -19,7 +21,7 @@ class Plots:
     def init_macroeconomic_plots(self) -> None:
         self.fig, self.axes = plt.subplots(2, 3, figsize=(15, 8))
         self.fig.suptitle('Макроэкономические показатели', fontsize=16, fontweight='bold')
-        
+
         self.lines = {
             'output': self.axes[0, 0].plot([], [], color='#2E86AB', linewidth=2)[0],
             'inflation': self.axes[0, 1].plot([], [], color='#A23B72', linewidth=2)[0],
@@ -28,7 +30,7 @@ class Plots:
             'wage': self.axes[1, 1].plot([], [], color='#6A994E', linewidth=2)[0],
             'output_gap': self.axes[1, 2].plot([], [], color='#BC4B51', linewidth=2)[0]
         }
-        
+
         self.axes[0, 0].set_title('Выпуск (Y)', fontweight='bold')
         self.axes[0, 0].set_xlabel('Период')
         self.axes[0, 0].set_ylabel('Y')
@@ -64,26 +66,44 @@ class Plots:
 
         plt.tight_layout()
 
-    def update(self, period: int, output: float, inflation: float, unemployment: float, 
-               rate: float, wage: float) -> None:
+    def update(self, period: int, output: float, inflation: float, unemployment: float,
+               rate: float, wage: float, president_message: str = "") -> None:
         self.periods.append(period)
         self.output_data.append(output)
         self.inflation_data.append(inflation * 100)
         self.unemployment_data.append(unemployment * 100)
         self.interest_rate_data.append(rate * 100)
         self.wage_data.append(wage)
-        
-        
+        if president_message:
+            self.president_messages.append(president_message)
+            if len(self.president_messages) > 3:
+                self.president_messages = self.president_messages[-3:]
+
         self.lines['output'].set_data(self.periods, self.output_data)
         self.lines['inflation'].set_data(self.periods, self.inflation_data)
         self.lines['unemployment'].set_data(self.periods, self.unemployment_data)
         self.lines['interest_rate'].set_data(self.periods, self.interest_rate_data)
         self.lines['wage'].set_data(self.periods, self.wage_data)
-        
+
         for ax in self.axes.flat:
             ax.relim()
             ax.autoscale_view()
-        
+
+        ax_president = self.axes[1, 2]
+        ax_president.clear()
+        ax_president.set_title('Президент сказал:', fontweight='bold')
+        ax_president.axis('off')
+        y_positions = [0.85, 0.55, 0.25]
+        font_size = 10
+        max_chars = 90
+        for i, msg in enumerate(self.president_messages):
+            message = f"{period - len(self.president_messages) + 1 + i}. {msg}"
+            if len(message) > max_chars:
+                message = '\n'.join([message[j:j+max_chars] for j in range(0, len(message), max_chars)])
+            ax_president.text(0.01, y_positions[i], message, fontsize=font_size, va='top', ha='left', wrap=True,
+                              color="black", transform=ax_president.transAxes)
+
+        self.fig.tight_layout()
         self.fig.canvas.draw_idle()
         self.fig.canvas.flush_events()
 

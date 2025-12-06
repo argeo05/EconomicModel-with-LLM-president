@@ -14,7 +14,8 @@ from src.visualization import DataEconomyHandler
 from src.model.agents import Households
 
 
-def run_simulation(years: int, config_path: str, llm_based_president: bool, llm_based_households: bool) -> DataEconomyHandler:
+def run_simulation(years: int, config_path: str, llm_based_president: bool,
+                   llm_based_households: bool) -> DataEconomyHandler:
     config = load_config(config_path)
 
     households: Households = Households()
@@ -71,8 +72,11 @@ def run_simulation(years: int, config_path: str, llm_based_president: bool, llm_
     for _ in range(years):
         economy.step()
         s = economy.state
-        data_base.append(s.output, s.inflation, s.unemployment, s.interest_rate, s.wage)
-        plots.update(s.period, s.output, s.inflation, s.unemployment, s.interest_rate, s.wage)
+        president_advice = s.president_message
+        data_base.append(s.output, s.inflation, s.unemployment, s.interest_rate, s.wage,
+                         president_advice)
+        plots.update(s.period, s.output, s.inflation, s.unemployment, s.interest_rate, s.wage,
+                     president_advice)
         print(
             f"Период {s.period:3d} | "
             f"Y={s.output:8.2f} | π={s.inflation:6.2%} | u={s.unemployment:6.2%} | "
@@ -85,14 +89,14 @@ def run_simulation(years: int, config_path: str, llm_based_president: bool, llm_
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("years", type=int, help="number of years", default=10)
-    parser.add_argument("--llm-based-president", action="store_true", help="use LLM for president decisions")
-    parser.add_argument("--llm-based-households", action="store_true", help="use LLM for household decisions")
+    parser.add_argument("--llm-based-president", "-P", action="store_true", help="use LLM for president decisions")
+    parser.add_argument("--llm-based-households", "-H", action="store_true", help="use LLM for household decisions")
     parser.add_argument("--config", type=str, help="path to config file", default="config.yaml")
     args = parser.parse_args()
 
     run_simulation(years=args.years, config_path=args.config,
-                                    llm_based_president=args.llm_based_president,
-                                    llm_based_households=args.llm_based_households)
+                   llm_based_president=args.llm_based_president,
+                   llm_based_households=args.llm_based_households)
 
 
 if __name__ == "__main__":

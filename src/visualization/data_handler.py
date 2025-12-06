@@ -18,17 +18,18 @@ class DataEconomyHandler:
                                  inflation REAL,
                                  unemployment REAL,
                                  rate REAL,
-                                 wage REAL
+                                 wage REAL,
+                                 presidentAdvice TEXT
                              )
                              """)
         self._conn.commit()
         return self
         
-    def append(self, output: float, inflation: float, unemployment: float, rate: float, wage: float):
+    def append(self, output: float, inflation: float, unemployment: float, rate: float, wage: float, presidentAdvice: str):
         self._cursor.execute("""
-                             INSERT INTO years (output, inflation, unemployment, rate, wage)
-                             VALUES (?, ?, ?, ?, ?)
-                             """, (output, inflation, unemployment, rate, wage))
+                             INSERT INTO years (output, inflation, unemployment, rate, wage, presidentAdvice)
+                             VALUES (?, ?, ?, ?, ?, ?)
+                             """, (output, inflation, unemployment, rate, wage, presidentAdvice))
         self._conn.commit()
 
     def get_data_us_history(self) -> List[Dict[str, float]]:

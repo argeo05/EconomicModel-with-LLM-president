@@ -76,6 +76,7 @@ class Economy:
             firm.productivity *= (1 + self.tech_progress_rate)
 
         new_rate = self.central_bank.propose_rate(inflation, total_output)
+        president_message = ""
         if self.llm_based_president:
             president_answer = President.make_decision(
                 y_star=self.central_bank.Y_star,
@@ -87,6 +88,9 @@ class Economy:
                 r_central_bank=new_rate
             )
             new_rate = president_answer.new_interest_rate
+            president_message = (president_answer.comment
+                                 + f"! Выбрал ставку {president_answer.new_interest_rate * 100}%! "
+                                 + president_answer.advice)
             self.households.president_advice = president_answer.advice
 
         new_wage = self.labor_market.clear_market(labor_supply, labor_demand)
@@ -96,5 +100,6 @@ class Economy:
             new_unemployment=unemployment,
             new_interest_rate=new_rate,
             new_wage=new_wage,
-            new_price_level=new_price
+            new_price_level=new_price,
+            president_message=president_message
         )

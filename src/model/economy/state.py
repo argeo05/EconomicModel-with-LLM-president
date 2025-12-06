@@ -14,6 +14,7 @@ class EconomyState:
         interest_rate: Interest rate
         wage: Wage rate
         price_level: Price level
+        president_message: President message
     """
     period: int
     output: float
@@ -22,6 +23,7 @@ class EconomyState:
     interest_rate: float
     wage: float
     price_level: float
+    president_message: str = ""
 
     def update(
         self,
@@ -30,7 +32,8 @@ class EconomyState:
         new_unemployment: float,
         new_interest_rate: float,
         new_wage: float,
-        new_price_level: float
+        new_price_level: float,
+        president_message: str
     ) -> None:
         """Update state variables.
 
@@ -49,6 +52,7 @@ class EconomyState:
         self.interest_rate = new_interest_rate
         self.wage = new_wage
         self.price_level = new_price_level
+        self.president_message = president_message
 
     @staticmethod
     def initial(config: Optional[dict] = None) -> "EconomyState":
