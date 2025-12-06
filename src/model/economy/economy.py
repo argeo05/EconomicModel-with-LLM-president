@@ -85,11 +85,11 @@ class Economy:
                 unemployment=unemployment,
                 supply_goods=sum(goods_supply),
                 demand_goods=sum(goods_demand),
-                r_central_bank=new_rate
+                r_central_bank=new_rate * 100
             )
-            new_rate = president_answer.new_interest_rate
+            new_rate = president_answer.new_interest_rate / 100
             president_message = (president_answer.comment
-                                 + f"! Выбрал ставку {president_answer.new_interest_rate * 100}%! "
+                                 + f"! Выбрал ставку {president_answer.new_interest_rate}%! "
                                  + president_answer.advice)
             self.households.president_advice = president_answer.advice
 
