@@ -10,10 +10,11 @@ from src import (
     load_config,
     plot_all_analytics
 )
+from src.visualization import DataEconomyHandler
 from src.model.agents import Households
 
 
-def run_simulation(years: int, config_path: str, llm_based_president: bool, llm_based_households: bool) -> list[dict[str, float]]:
+def run_simulation(years: int, config_path: str, llm_based_president: bool, llm_based_households: bool) -> DataEconomyHandler:
     config = load_config(config_path)
 
     households: Households = Households()
@@ -53,6 +54,7 @@ def run_simulation(years: int, config_path: str, llm_based_president: bool, llm_
     initial_state = config.get("initial_state", {})
     labor_market = LaborMarket(initial_state["wage"])
     goods_market = GoodsMarket(price=config["goods_market"]["initial_price"])
+    data_base = DataEconomyHandler().initialize_data_base()
     economy = Economy(
         households=households,
         firms=firms,
@@ -61,27 +63,19 @@ def run_simulation(years: int, config_path: str, llm_based_president: bool, llm_
         goods_market=goods_market,
         state=EconomyState.initial(initial_state),
         llm_based_president=llm_based_president,
-        llm_based_households=llm_based_households
+        llm_based_households=llm_based_households,
     )
 
-    history = []
     for _ in range(years):
         economy.step()
         s = economy.state
-        history.append({
-            "period": s.period,
-            "output": s.output,
-            "inflation": s.inflation,
-            "unemployment": s.unemployment,
-            "rate": s.interest_rate,
-            "wage": s.wage
-        })
+        data_base.append(s.output, s.inflation, s.unemployment, s.interest_rate, s.wage)
         print(
             f"Период {s.period:3d} | "
             f"Y={s.output:8.2f} | π={s.inflation:6.2%} | u={s.unemployment:6.2%} | "
             f"r={s.interest_rate:6.2%} | w={s.wage:6.2f}"
         )
-    return history
+    return data_base
 
 
 def main() -> None:
@@ -92,11 +86,12 @@ def main() -> None:
     parser.add_argument("--config", type=str, help="path to config file", default="config.yaml")
     args = parser.parse_args()
 
-    history_yearly = run_simulation(years=args.years, config_path=args.config,
+    data_base = run_simulation(years=args.years, config_path=args.config,
                                     llm_based_president=args.llm_based_president,
                                     llm_based_households=args.llm_based_households)
 
-    plot_all_analytics(history_yearly, output_dir="output")
+    plot_all_analytics(data_base, output_dir="output")
+
 
 if __name__ == "__main__":
     main()

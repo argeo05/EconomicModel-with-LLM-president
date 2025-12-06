@@ -21,7 +21,7 @@ class Household:
         savings: Accumulated savings
         desired_consumption: Desired consumption amount
         interest_rate_sensitivity: Sensitivity to interest rate in consumption decision
-        saving_usage: Proportion of savings used for consumption
+        savings_usage: Proportion of savings used for consumption
     """
     income: float
     consumption: float

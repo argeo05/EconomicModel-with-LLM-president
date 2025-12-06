@@ -1,5 +1,6 @@
 from typing import List
-from ..agents import Household, Firm, President, Households
+
+from ..agents import Firm, President, Households
 from ..institutions import CentralBank, LaborMarket, GoodsMarket
 from .state import EconomyState
 
@@ -21,7 +22,8 @@ class Economy:
 
     def __init__(self, households: Households, firms: List[Firm], central_bank: CentralBank,
                  labor_market: LaborMarket, goods_market: GoodsMarket, state: EconomyState,
-                 llm_based_president: bool, llm_based_households: bool, tech_progress_rate: float = 0.005):
+                 llm_based_president: bool, llm_based_households: bool,
+                 tech_progress_rate: float = 0.005):
         self.households = households
         self.firms = firms
         self.central_bank = central_bank

@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from typing import List, Dict
-import numpy as np
+
+from .data_handler import DataEconomyHandler
 
 
 def plot_macroeconomic_indicators(history: List[Dict[str, float]], save_path: str = None) -> None:
@@ -72,9 +73,7 @@ def plot_macroeconomic_indicators(history: List[Dict[str, float]], save_path: st
     
     plt.show()
 
-# TODO: МБ реализовать визуализацию кривой Филлипса и Тейлора
-
-def plot_all_analytics(history: List[Dict[str, float]], output_dir: str = "outputs") -> None:
+def plot_all_analytics(data: DataEconomyHandler, output_dir: str = "outputs") -> None:
     """Generate all analytical plots.
 
     Args:
@@ -86,6 +85,6 @@ def plot_all_analytics(history: List[Dict[str, float]], output_dir: str = "outpu
 
     print("\nСоздание аналитических графиков...")
 
-    plot_macroeconomic_indicators(history, save_path=f"{output_dir}/macroeconomic_indicators.png")
+    plot_macroeconomic_indicators(data.get_data_us_history(), save_path=f"{output_dir}/macroeconomic_indicators.png")
 
     print(f"\nВсе графики сохранены в папку: {output_dir}/")
