@@ -7,8 +7,8 @@ from src import (
     GoodsMarket,
     Economy,
     EconomyState,
-    load_config,
-    plot_all_analytics
+    Plots,
+    load_config
 )
 from src.visualization import DataEconomyHandler
 from src.model.agents import Households
@@ -55,6 +55,8 @@ def run_simulation(years: int, config_path: str, llm_based_president: bool, llm_
     labor_market = LaborMarket(initial_state["wage"])
     goods_market = GoodsMarket(price=config["goods_market"]["initial_price"])
     data_base = DataEconomyHandler().initialize_data_base()
+    plots = Plots()
+
     economy = Economy(
         households=households,
         firms=firms,
@@ -70,11 +72,13 @@ def run_simulation(years: int, config_path: str, llm_based_president: bool, llm_
         economy.step()
         s = economy.state
         data_base.append(s.output, s.inflation, s.unemployment, s.interest_rate, s.wage)
+        plots.update(s.period, s.output, s.inflation, s.unemployment, s.interest_rate, s.wage)
         print(
             f"Период {s.period:3d} | "
             f"Y={s.output:8.2f} | π={s.inflation:6.2%} | u={s.unemployment:6.2%} | "
             f"r={s.interest_rate:6.2%} | w={s.wage:6.2f}"
         )
+    plots.show()
     return data_base
 
 
@@ -86,11 +90,9 @@ def main() -> None:
     parser.add_argument("--config", type=str, help="path to config file", default="config.yaml")
     args = parser.parse_args()
 
-    data_base = run_simulation(years=args.years, config_path=args.config,
+    run_simulation(years=args.years, config_path=args.config,
                                     llm_based_president=args.llm_based_president,
                                     llm_based_households=args.llm_based_households)
-
-    plot_all_analytics(data_base, output_dir="output")
 
 
 if __name__ == "__main__":
