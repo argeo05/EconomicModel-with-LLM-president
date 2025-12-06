@@ -11,6 +11,7 @@ __pycache__/
 .Python
 build/
 output/
+.benchmarks/
 outputs/ 
 .vscode/
 develop-eggs/

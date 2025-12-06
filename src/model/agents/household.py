@@ -234,7 +234,7 @@ class Households:
                 desired_consumptions = data["desired_consumptions"]
 
                 for i, h in enumerate(self.households):
-                    available_funds = h.income + max(0.0, h.savings * h.savings_usage)
+                    available_funds = h.income + h.savings
                     h.desired_consumption = max(0.0, min(available_funds, float(desired_consumptions[i])))
 
             except json.decoder.JSONDecodeError as e:

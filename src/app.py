@@ -10,8 +10,8 @@ from src import (
     Plots,
     load_config
 )
-from src.visualization import DataEconomyHandler
-from src.model.agents import Households
+from .visualization import DataEconomyHandler
+from .model.agents import Households
 
 
 def run_simulation(years: int, config_path: str, llm_based_president: bool,
