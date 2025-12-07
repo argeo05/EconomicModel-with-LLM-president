@@ -234,7 +234,7 @@ class Households:
                 for i, h in enumerate(self.households):
                     available_funds = h.income + h.savings
                     h.desired_consumption = max(0.0, min(available_funds, float(desired_consumptions[i])))
-
+                return
             except json.decoder.JSONDecodeError as e:
                 print(f"LLM returned not right format: {response}, trying again. Exception: {e}")
             except perplexity.APIConnectionError as e:
