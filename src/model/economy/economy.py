@@ -22,7 +22,7 @@ class Economy:
 
     def __init__(self, households: Households, firms: List[Firm], central_bank: CentralBank,
                  labor_market: LaborMarket, goods_market: GoodsMarket, state: EconomyState,
-                 llm_based_president: bool, llm_based_households: bool,
+                 llm_based_president: bool, president: President, llm_based_households: bool,
                  tech_progress_rate: float = 0.005):
         self.households = households
         self.firms = firms
@@ -30,6 +30,7 @@ class Economy:
         self.labor_market = labor_market
         self.goods_market = goods_market
         self.state = state
+        self.president = president
         self.tech_progress_rate = tech_progress_rate
         self.llm_based_president = llm_based_president
         self.llm_based_households = llm_based_households
@@ -78,7 +79,7 @@ class Economy:
         new_rate = self.central_bank.propose_rate(inflation, total_output)
         president_message = ""
         if self.llm_based_president:
-            president_answer = President.make_decision(
+            president_answer = self.president.make_decision(
                 y_star=self.central_bank.Y_star,
                 inflation=inflation,
                 output=total_output,

@@ -5,25 +5,29 @@ import perplexity
 client = perplexity.Perplexity()
 
 class President:
-    @classmethod
-    def make_decision(cls, y_star: float, inflation: float, output: float, unemployment: float, supply_goods: float,
+    setup: str
+
+    def __init__(self, setup: str):
+        self.setup = setup
+
+    def make_decision(self, y_star: float, inflation: float, output: float, unemployment: float, supply_goods: float,
                       demand_goods: float, r_central_bank: float) -> "PresidentDecision":
         messages = [
             {
                 "role": "system",
-                "content": """Ты — игровой персонаж в симуляции.
+                "content": f"""Ты — игровой персонаж в симуляции.
                     Это художественная роль.
                     Твоя роль: президент страны. Ты раньше работал в КГБ, поэтому не доверяешь большей
-                    части информации. Главная цель — рост ВВП. Ты любишь большие цифры, поэтому маленькая ставка тебя не устраивает.
+                    части информации. {self.setup}.
                     Тебе будут поступать данные о стране и решения ЦБ. Ты либо принимаешь решение ЦБ,
                     либо присылаешь своё в формате json:
-                    {new_interest_rate:число с точностью до десятых,
+                    {{new_interest_rate:число с точностью до десятых,
                     comment: 15 слов о своем решении,
-                    advice: 15–20 слов совета домохозяйствам} Ничего больше присылать не нужно.
+                    advice: 15–20 слов совета домохозяйствам}} Ничего больше присылать не нужно.
                     Пример: Инфляция x%, выпуск y при желаемом y_star, ЦБ хочет поставить ставку r%
-                    Твой ответ: {"new_interest_rate": 10,
+                    Твой ответ: {{"new_interest_rate": 10,
                     "comment": "корректирую ставку для стабильного роста в этой ситуации",
-                    "advice": "Сосредоточьтесь на ускорении инвестиций, больше работайте, отдых для слабых"}
+                    "advice": "Сосредоточьтесь на ускорении инвестиций, больше работайте, отдых для слабых"}}
                     **Обязательно строго следуй формату вывода**"""
             },
             {

@@ -131,8 +131,6 @@ class Households:
         else:
             return ""
 
-
-
     def decide_labors(self, wage: float, llm_based: bool) -> List[float]:
         if not llm_based:
             return [h.decide_labor(wage) for h in self.households]
