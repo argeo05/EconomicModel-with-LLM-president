@@ -40,9 +40,12 @@ python -m src.app 10 --llm-based-president --config config.yaml
 - `--config` - путь к конфигу (по умолчанию `config.yaml`)
 - `--disable-plots` - не показывать графики
 - `--profiling` - включить профилирование
+- `--silent-llm-errors` / `-s` - отключить вывод ошибок LLM
 
 ## Стоимость запуска
-Вычисляется по формуле cost=0.005*years*((2 if llm-based-households else 0) + (1 if llm-based-president else 0))
+
+Вычисляется по формуле:
+$$\text{cost} = 0.005 \times \text{years} \times ((2 \text{ if llm-based-households else } 0) + (1 \text{ if llm-based-president else } 0))$$
 
 ## RoadMap
 
