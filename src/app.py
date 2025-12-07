@@ -18,6 +18,19 @@ DEFAULT_PRESIDENT_SETUP = "Главная цель — рост ВВП. Ты л�
 
 def run_simulation(years: int, config_path: str, llm_based_president: bool,
                    llm_based_households: bool, president_setup: str, show_plots: bool = True) -> DataEconomyHandler:
+    """Run economic simulation.
+
+    Args:
+        years: Number of simulation periods
+        config_path: Path to configuration file
+        llm_based_president: If True use LLM for president decisions
+        llm_based_households: If True use LLM for household decisions
+        president_setup: Character setup for president LLM
+        show_plots: If True display interactive plots
+
+    Returns:
+        DataEconomyHandler with simulation results
+    """
     config = load_config(config_path)
 
     households: Households = Households()
@@ -97,6 +110,7 @@ def run_simulation(years: int, config_path: str, llm_based_president: bool,
 
 
 def main() -> None:
+    """Main entry point for simulation."""
     parser = argparse.ArgumentParser()
     parser.add_argument("years", type=int, help="number of years", default=10)
     parser.add_argument("--llm-based-president", "-pr", action="store_true", help="use LLM for president decisions")

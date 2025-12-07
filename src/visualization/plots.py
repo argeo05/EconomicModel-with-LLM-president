@@ -2,6 +2,21 @@ import matplotlib.pyplot as plt
 
 
 class Plots:
+    """Interactive plots for macroeconomic indicators.
+
+    Attributes:
+        fig: Matplotlib figure
+        axes: Subplot axes array
+        lines: Dictionary of plot lines
+        periods: List of period numbers
+        output_data: Output history
+        inflation_data: Inflation history
+        unemployment_data: Unemployment history
+        interest_rate_data: Interest rate history
+        wage_data: Wage history
+        president_messages: Recent president messages
+    """
+    
     def __init__(self):
         self.fig = None
         self.axes = None
@@ -19,6 +34,7 @@ class Plots:
         self.init_macroeconomic_plots()
 
     def init_macroeconomic_plots(self) -> None:
+        """Initialize subplot layout and styling."""
         self.fig, self.axes = plt.subplots(2, 3, figsize=(15, 8))
         self.fig.suptitle('Макроэкономические показатели', fontsize=16, fontweight='bold')
 
@@ -68,6 +84,17 @@ class Plots:
 
     def update(self, period: int, output: float, inflation: float, unemployment: float,
                rate: float, wage: float, president_message: str = "") -> None:
+        """Update plots with new data point.
+
+        Args:
+            period: Current period number
+            output: Output value
+            inflation: Inflation rate
+            unemployment: Unemployment rate
+            rate: Interest rate
+            wage: Wage rate
+            president_message: President message to display
+        """
         self.periods.append(period)
         self.output_data.append(output)
         self.inflation_data.append(inflation * 100)
@@ -108,4 +135,5 @@ class Plots:
         self.fig.canvas.flush_events()
 
     def show(self) -> None:
+        """Show plots in blocking mode."""
         plt.show(block=True)

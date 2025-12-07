@@ -44,6 +44,7 @@ class EconomyState:
             new_interest_rate: New interest rate
             new_wage: New wage rate
             new_price_level: New price level
+            president_message: Message from president
         """
         self.period += 1
         self.output = new_output

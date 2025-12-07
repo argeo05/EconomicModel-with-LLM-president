@@ -5,13 +5,37 @@ import perplexity
 client = perplexity.Perplexity()
 
 class President:
+    """President agent that makes monetary policy decisions.
+
+    Attributes:
+        setup: Character setup and instructions for LLM
+    """
     setup: str
 
     def __init__(self, setup: str):
+        """Initialize president agent.
+
+        Args:
+            setup: Character setup and instructions for LLM
+        """
         self.setup = setup
 
     def make_decision(self, y_star: float, inflation: float, output: float, unemployment: float, supply_goods: float,
                       demand_goods: float, r_central_bank: float) -> "PresidentDecision":
+        """Make monetary policy decision based on economic indicators.
+
+        Args:
+            y_star: Target output level
+            inflation: Current inflation rate
+            output: Current output level
+            unemployment: Current unemployment rate
+            supply_goods: Total goods supply
+            demand_goods: Total goods demand
+            r_central_bank: Central bank proposed interest rate
+
+        Returns:
+            PresidentDecision with new interest rate, comment and advice
+        """
         messages = [
             {
                 "role": "system",
@@ -66,6 +90,13 @@ class President:
 
 @dataclass
 class PresidentDecision:
+    """President decision result.
+
+    Attributes:
+        new_interest_rate: Chosen interest rate
+        comment: Comment about the decision
+        advice: Advice to households
+    """
     new_interest_rate: float
     comment: str
     advice: str

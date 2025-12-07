@@ -32,6 +32,7 @@ class Firm:
 
         Args:
             wage: Wage rate
+            interest_rate: Interest rate affecting labor demand
 
         Returns:
             Total labor demand across all firms

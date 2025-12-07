@@ -60,6 +60,9 @@ class Household:
     def decide_consumption(self, interest_rate: float) -> float:
         """Decide desired consumption.
 
+        Args:
+            interest_rate: Interest rate
+
         Returns:
             Desired consumption amount
         """
@@ -94,6 +97,14 @@ class Household:
 
 
 class Households:
+    """Collection of household agents with LLM decision support.
+
+    Attributes:
+        SAVING_USAGE: Default proportion of savings used for consumption
+        SYSTEM_MESSAGE: System prompt for LLM household decisions
+        households: List of household agents
+        president_advice: Advice from president to households
+    """
     SAVING_USAGE: float = 0.05
     SYSTEM_MESSAGE = {
         "role": "system",
@@ -122,9 +133,19 @@ class Households:
         self.president_advice: str = None
 
     def append(self, household: Household) -> None:
+        """Add household to collection.
+
+        Args:
+            household: Household agent to add
+        """
         self.households.append(household)
 
     def _get_advice_from_president(self) -> str:
+        """Get formatted president advice message.
+
+        Returns:
+            Formatted advice message or empty string
+        """
         if self.president_advice:
             return (f"Президент по прошествию предыдущего периода дал совет{self.president_advice}. "
                     f"Ты не обязан его слушать, но знать о нем должен.")
@@ -132,6 +153,15 @@ class Households:
             return ""
 
     def decide_labors(self, wage: float, llm_based: bool) -> List[float]:
+        """Decide labor supply for all households.
+
+        Args:
+            wage: Wage rate
+            llm_based: If True use LLM for decisions, else use rule-based
+
+        Returns:
+            List of labor supply amounts for each household
+        """
         if not llm_based:
             return [h.decide_labor(wage) for h in self.households]
 
@@ -191,6 +221,12 @@ class Households:
         return default_result
 
     def decide_consumptions(self, interest_rate: float, llm_based: bool) -> None:
+        """Decide consumption for all households.
+
+        Args:
+            interest_rate: Interest rate
+            llm_based: If True use LLM for decisions, else use rule-based
+        """
         if not llm_based:
             for h in self.households:
                 h.decide_consumption(interest_rate)
