@@ -1,5 +1,4 @@
 import argparse
-import cProfile
 from src import (
     Household,
     Firm,
@@ -110,6 +109,7 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.profiling:
+        import cProfile
         cProfile.run(f"""run_simulation(years={args.years}, config_path="{args.config}",
                        llm_based_president={args.llm_based_president},
                        llm_based_households={args.llm_based_households},
