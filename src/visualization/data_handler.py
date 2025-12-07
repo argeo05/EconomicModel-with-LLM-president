@@ -32,6 +32,13 @@ class DataEconomyHandler:
                              """, (output, inflation, unemployment, rate, wage, presidentAdvice))
         self._conn.commit()
 
+    def append_all(self, records: List[tuple]):
+        self._cursor.executemany("""
+                                 INSERT INTO years (output, inflation, unemployment, rate, wage, presidentAdvice)
+                                 VALUES (?, ?, ?, ?, ?, ?)
+                                 """, records)
+        self._conn.commit()
+
     def get_data_us_history(self) -> List[Dict[str, float]]:
         self._cursor.execute("SELECT year, output, inflation, unemployment, rate, wage FROM years")
         rows = self._cursor.fetchall()
