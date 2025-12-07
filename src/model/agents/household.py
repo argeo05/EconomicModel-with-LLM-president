@@ -104,6 +104,7 @@ class Households:
         SYSTEM_MESSAGE: System prompt for LLM household decisions
         households: List of household agents
         president_advice: Advice from president to households
+        disable_parse_errors: If True disable JSON parse error display
     """
     SAVING_USAGE: float = 0.05
     SYSTEM_MESSAGE = {
@@ -128,9 +129,10 @@ class Households:
                             вывод: {{"desired_consumptions": [x, y]}}"""
     }
 
-    def __init__(self):
+    def __init__(self, disable_parse_errors: bool = False):
         self.households = []
         self.president_advice: str = None
+        self.disable_parse_errors = disable_parse_errors
 
     def append(self, household: Household) -> None:
         """Add household to collection.
@@ -208,7 +210,8 @@ class Households:
                 return [h.labor_supply * h.n for h in self.households]
 
             except json.decoder.JSONDecodeError as e:
-                print(f"LLM returned not right format: {response}, trying again. Exception: {e}")
+                if not self.disable_parse_errors:
+                    print(f"LLM returned not right format: {response}, trying again. Exception: {e}")
             except perplexity.APIConnectionError as e:
                 print("Network connection failed")
                 print(e.__cause__)
@@ -272,7 +275,8 @@ class Households:
                     h.desired_consumption = max(0.0, min(available_funds, float(desired_consumptions[i])))
                 return
             except json.decoder.JSONDecodeError as e:
-                print(f"LLM returned not right format: {response}, trying again. Exception: {e}")
+                if not self.disable_parse_errors:
+                    print(f"LLM returned not right format: {response}, trying again. Exception: {e}")
             except perplexity.APIConnectionError as e:
                 print("Network connection failed")
                 print(e.__cause__)

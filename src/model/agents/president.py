@@ -9,16 +9,20 @@ class President:
 
     Attributes:
         setup: Character setup and instructions for LLM
+        disable_parse_errors: If True disable JSON parse error display
     """
     setup: str
+    disable_parse_errors: bool
 
-    def __init__(self, setup: str):
+    def __init__(self, setup: str, disable_parse_errors: bool = False):
         """Initialize president agent.
 
         Args:
             setup: Character setup and instructions for LLM
+            disable_parse_errors: If True disable JSON parse error display
         """
         self.setup = setup
+        self.disable_parse_errors = disable_parse_errors
 
     def make_decision(self, y_star: float, inflation: float, output: float, unemployment: float, supply_goods: float,
                       demand_goods: float, r_central_bank: float) -> "PresidentDecision":
@@ -76,7 +80,8 @@ class President:
                     raise json.decoder.JSONDecodeError("Missing keys in response", president_answer, 0)
                 break
             except json.decoder.JSONDecodeError as e:
-                print(f"LLM returned not right format: {president_answer}, trying again. Exception: {e} ")
+                if not self.disable_parse_errors:
+                    print(f"LLM returned not right format: {president_answer}, trying again. Exception: {e} ")
             except perplexity.APIConnectionError as e:
                 print("Network connection failed")
                 print(e.__cause__)

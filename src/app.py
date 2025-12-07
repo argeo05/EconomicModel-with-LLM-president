@@ -17,7 +17,8 @@ DEFAULT_PRESIDENT_SETUP = "Главная цель — рост ВВП. Ты л�
 
 
 def run_simulation(years: int, config_path: str, llm_based_president: bool,
-                   llm_based_households: bool, president_setup: str, show_plots: bool = True) -> DataEconomyHandler:
+                   llm_based_households: bool, president_setup: str, show_plots: bool = True,
+                   disable_parse_errors: bool = False) -> DataEconomyHandler:
     """Run economic simulation.
 
     Args:
@@ -27,13 +28,14 @@ def run_simulation(years: int, config_path: str, llm_based_president: bool,
         llm_based_households: If True use LLM for household decisions
         president_setup: Character setup for president LLM
         show_plots: If True display interactive plots
+        disable_parse_errors: If True disable JSON parse error display
 
     Returns:
         DataEconomyHandler with simulation results
     """
     config = load_config(config_path)
 
-    households: Households = Households()
+    households: Households = Households(disable_parse_errors)
     for class_config in config["households"]:
         households.append(
             Household(
@@ -71,7 +73,7 @@ def run_simulation(years: int, config_path: str, llm_based_president: bool,
     labor_market = LaborMarket(initial_state["wage"])
     goods_market = GoodsMarket(price=config["goods_market"]["initial_price"])
     data_base = DataEconomyHandler().initialize_data_base()
-    president = President(president_setup)
+    president = President(president_setup, disable_parse_errors)
     history = []
     if show_plots:
         plots = Plots()
@@ -86,6 +88,7 @@ def run_simulation(years: int, config_path: str, llm_based_president: bool,
         state=EconomyState.initial(initial_state),
         llm_based_president=llm_based_president,
         llm_based_households=llm_based_households,
+        disable_parse_errors=disable_parse_errors,
     )
 
     for _ in range(years):
@@ -118,6 +121,7 @@ def main() -> None:
                         default=DEFAULT_PRESIDENT_SETUP)
     parser.add_argument("--disable-plots", action="store_true", help="Disable plots")
     parser.add_argument("--llm-based-households", "-hh", action="store_true", help="use LLM for household decisions")
+    parser.add_argument("--disable-parse-errors", "-dpe", action="store_true", help="Disable JSON parse error display")
     parser.add_argument("--config", type=str, help="path to config file", default="config.yaml")
     parser.add_argument("--profiling", action="store_true", help="Enable profiling")
     args = parser.parse_args()
@@ -128,13 +132,15 @@ def main() -> None:
                        llm_based_president={args.llm_based_president},
                        llm_based_households={args.llm_based_households},
                        president_setup="{args.president_setup}",
-                       show_plots={not args.disable_plots})""", filename="profile_new.prof")
+                       show_plots={not args.disable_plots},
+                       disable_parse_errors={args.disable_parse_errors})""", filename="profile_new.prof")
     else:
         run_simulation(years=args.years, config_path=args.config,
                        llm_based_president=args.llm_based_president,
                        president_setup=args.president_setup,
                        llm_based_households = args.llm_based_households,
-                       show_plots=not args.disable_plots)
+                       show_plots=not args.disable_plots,
+                       disable_parse_errors=args.disable_parse_errors)
 
 if __name__ == "__main__":
     main()

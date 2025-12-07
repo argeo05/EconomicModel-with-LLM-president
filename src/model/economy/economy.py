@@ -18,12 +18,13 @@ class Economy:
         tech_progress_rate: Technological progress rate
         llm_based_president: If true use llm for president, else only rules
         llm_based_households: If true use llm for households, else only rules
+        disable_parse_errors: If True disable JSON parse error display
     """
 
     def __init__(self, households: Households, firms: List[Firm], central_bank: CentralBank,
                  labor_market: LaborMarket, goods_market: GoodsMarket, state: EconomyState,
                  llm_based_president: bool, president: President, llm_based_households: bool,
-                 tech_progress_rate: float = 0.005):
+                 tech_progress_rate: float = 0.005, disable_parse_errors: bool = False):
         self.households = households
         self.firms = firms
         self.central_bank = central_bank
@@ -34,6 +35,7 @@ class Economy:
         self.tech_progress_rate = tech_progress_rate
         self.llm_based_president = llm_based_president
         self.llm_based_households = llm_based_households
+        self.disable_parse_errors = disable_parse_errors
 
     def step(self) -> None:
         """Execute one simulation period."""
