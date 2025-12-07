@@ -12,6 +12,7 @@ __pycache__/
 build/
 output/
 .benchmarks/
+.pytest_cache/
 outputs/ 
 .vscode/
 develop-eggs/

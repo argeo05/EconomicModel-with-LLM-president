@@ -1,4 +1,5 @@
 import argparse
+import cProfile
 from src import (
     Household,
     Firm,
@@ -15,7 +16,7 @@ from .model.agents import Households
 
 
 def run_simulation(years: int, config_path: str, llm_based_president: bool,
-                   llm_based_households: bool) -> DataEconomyHandler:
+                   llm_based_households: bool, show_plots: bool = True) -> DataEconomyHandler:
     config = load_config(config_path)
 
     households: Households = Households()
@@ -56,7 +57,8 @@ def run_simulation(years: int, config_path: str, llm_based_president: bool,
     labor_market = LaborMarket(initial_state["wage"])
     goods_market = GoodsMarket(price=config["goods_market"]["initial_price"])
     data_base = DataEconomyHandler().initialize_data_base()
-    plots = Plots()
+    if show_plots:
+        plots = Plots()
 
     economy = Economy(
         households=households,
@@ -75,14 +77,16 @@ def run_simulation(years: int, config_path: str, llm_based_president: bool,
         president_advice = s.president_message
         data_base.append(s.output, s.inflation, s.unemployment, s.interest_rate, s.wage,
                          president_advice)
-        plots.update(s.period, s.output, s.inflation, s.unemployment, s.interest_rate, s.wage,
-                     president_advice)
+        if show_plots:
+            plots.update(s.period, s.output, s.inflation, s.unemployment, s.interest_rate, s.wage,
+                         president_advice)
         print(
             f"Период {s.period:3d} | "
             f"Y={s.output:8.2f} | π={s.inflation:6.2%} | u={s.unemployment:6.2%} | "
             f"r={s.interest_rate:6.2%} | w={s.wage:6.2f}"
         )
-    plots.show()
+    if show_plots:
+        plots.show()
     return data_base
 
 
@@ -92,11 +96,18 @@ def main() -> None:
     parser.add_argument("--llm-based-president", "-P", action="store_true", help="use LLM for president decisions")
     parser.add_argument("--llm-based-households", "-H", action="store_true", help="use LLM for household decisions")
     parser.add_argument("--config", type=str, help="path to config file", default="config.yaml")
+    parser.add_argument("--profiling", action="store_true", help="Enable profiling")
     args = parser.parse_args()
 
-    run_simulation(years=args.years, config_path=args.config,
-                   llm_based_president=args.llm_based_president,
-                   llm_based_households=args.llm_based_households)
+    if args.profiling:
+        cProfile.run(f"""run_simulation(years={args.years}, config_path="{args.config}",
+                       llm_based_president={args.llm_based_president},
+                       llm_based_households={args.llm_based_households},
+                       show_plots=False)""", filename="profile.prof")
+    else:
+        run_simulation(years=args.years, config_path=args.config,
+                       llm_based_president=args.llm_based_president,
+                       llm_based_households=args.llm_based_households)
 
 
 if __name__ == "__main__":
