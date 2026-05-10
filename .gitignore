@@ -7,8 +7,14 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+.idea/
 .Python
 build/
+output/
+.benchmarks/
+.pytest_cache/
+outputs/ 
+.vscode/
 develop-eggs/
 dist/
 downloads/
@@ -21,6 +27,7 @@ sdist/
 var/
 wheels/
 share/python-wheels/
+.github/
 *.egg-info/
 .installed.cfg
 *.egg
